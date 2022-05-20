@@ -25,15 +25,21 @@ export function selectAnswer(payload) {
   return{ type: actionTypes.SET_SELECTED_ANSWER, payload: payload}
  }
 
-export function setMessage() { }
+export function setMessage(payload) {
+  return{type:actionTypes.SET_INFO_MESSAGE, payload:payload}
+}
 
 export function setQuiz(payload) {
   return{type:actionTypes.SET_QUIZ_INTO_STATE, payload:payload}
 }
 
-export function inputChange() { }
+export function inputChange(payload) {
+  return{type:actionTypes.INPUT_CHANGE, payload:payload}
+}
 
-export function resetForm() { }
+export function resetForm() {
+  return{type: actionTypes.RESET_FORM}
+}
 
 // ❗ Async action creators
 export function fetchQuiz() {
@@ -43,20 +49,34 @@ export function fetchQuiz() {
     // - Dispatch an action to send the obtained quiz to its state
     axios.get('http://localhost:9000/api/quiz/next')
       .then(res=>{
-        console.log(res.data)
+        //console.log(res.data)
         dispatch(setQuiz(res.data))
       })
       .catch(err=>{
-        console.log('oops')
+        console.log('cannot get')
       })
   }
 }
-export function postAnswer() {
+export function postAnswer(quizID, answerID) {
   return function (dispatch) {
     // On successful POST:
     // - Dispatch an action to reset the selected answer state
     // - Dispatch an action to set the server message to state
     // - Dispatch the fetching of the next quiz
+    let myObj = {
+      quiz_id:quizID,
+      answer_id:answerID
+    }
+    axios.post('http://localhost:9000/api/quiz/answer', myObj)
+    .then(res=>{
+      console.log(res.data)
+      dispatch(setMessage(res.data.message))
+      dispatch(setQuiz(null))
+      dispatch(fetchQuiz())
+    })
+    .catch(err=>{
+      console.log('cannot post')
+    })
   }
 }
 export function postQuiz() {
@@ -64,6 +84,7 @@ export function postQuiz() {
     // On successful POST:
     // - Dispatch the correct message to the the appropriate state
     // - Dispatch the resetting of the form
-  }
+    
+}
 }
 // ❗ On promise rejections, use log statements or breakpoints, and put an appropriate error message in state

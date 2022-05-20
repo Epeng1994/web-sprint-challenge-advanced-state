@@ -1,9 +1,8 @@
 import React, {useEffect} from 'react'
 import {connect} from 'react-redux'
-import {fetchQuiz, selectAnswer} from '../state/action-creators'
+import {fetchQuiz, selectAnswer, postAnswer, setMessage} from '../state/action-creators'
 
 function Quiz(props) {
-
 
   useEffect(()=>{
     props.fetchQuiz()
@@ -18,23 +17,19 @@ function Quiz(props) {
             <h2>{props.quizState.question}</h2>
 
             <div id={props.quizState.quiz_id}>
-              
-              <div className="answer selected">
-                A function
-                <button>
-                  SELECTED
-                </button>
-              </div>
-
-              <div className="answer">
-                An elephant
-                <button>
-                  Select
-                </button>
-              </div>
+              {
+                props.quizState.answers.map(a=>{
+                  return(
+                    <div className={props.answerState === a.answer_id ? "answer selected" : "answer"} onClick = {()=>{props.selectAnswer(a.answer_id);props.setMessage(null)}}>
+                      {a.text}
+                      <button>
+                        {props.answerState === a.answer_id ? "SELECTED" : "select"}
+                      </button>
+                    </div>
+                  )})
+              }
             </div>
-
-            <button id="submitAnswerBtn" onClick ={()=>props.fetchQuiz()}>Submit answer</button>
+            <button id="submitAnswerBtn" disabled = {props.answerState ? false : true} onClick = {()=>props.postAnswer(props.quizState.quiz_id, props.answerState)}>Submit answer</button>
           </>
         ) : 'Loading next quiz...'
       }
@@ -46,8 +41,8 @@ function Quiz(props) {
 const mapStateToProps = state =>{
   return({
     quizState: state.quiz,
-    answerState: state.selectedAnswer
+    answerState: state.selectedAnswer //id of answer
   })
 }
 
-export default connect(mapStateToProps, {fetchQuiz, selectAnswer})(Quiz)
+export default connect(mapStateToProps, {fetchQuiz, selectAnswer, postAnswer, setMessage})(Quiz)
