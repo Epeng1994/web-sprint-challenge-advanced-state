@@ -5,7 +5,9 @@ import {fetchQuiz, selectAnswer, postAnswer, setMessage} from '../state/action-c
 function Quiz(props) {
 
   useEffect(()=>{
-    props.fetchQuiz()
+    if(props.quizState === null){
+      props.fetchQuiz()
+    }
   },[])
 
   return (
