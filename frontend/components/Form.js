@@ -9,7 +9,8 @@ export function Form(props) {
   }
 
   const onSubmit = evt => {
-
+    evt.preventDefault()
+    
   }
 
   return (
