@@ -9,7 +9,7 @@ function Quiz(props) {
       props.fetchQuiz()
     }
   },[])
-
+  console.log(props.quizState)
   return (
     <div id="wrapper">
       {
